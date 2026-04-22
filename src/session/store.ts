@@ -3,14 +3,13 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import type { CoreMessage } from "ai";
 import { sessionSchema, type StoredSession } from "./schema.js";
-import { paths } from "../config/paths.js";
+import { CWD, paths } from "../config/paths.js";
 
 export interface SessionStoreOptions {
   dir: string;
 }
 
 export interface NewSessionInput {
-  cwd: string;
   model: string;
   title?: string;
 }
@@ -32,7 +31,7 @@ export class SessionStore {
       id: randomUUID(),
       createdAt: now,
       updatedAt: now,
-      cwd: input.cwd,
+      cwd: CWD,
       model: input.model,
       ...(input.title !== undefined ? { title: input.title } : {}),
       compactedAt: [],
@@ -94,9 +93,9 @@ export class SessionStore {
     }
   }
 
-  async findLastForCwd(cwd: string): Promise<StoredSession | null> {
+  async findLastForCwd(): Promise<StoredSession | null> {
     const all = await this.list();
-    const match = all.find((s) => s.cwd === cwd);
+    const match = all.find((s) => s.cwd === CWD);
     if (!match) return null;
     return this.load(match.id);
   }

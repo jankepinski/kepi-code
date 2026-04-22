@@ -4,6 +4,7 @@ import { z } from "zod";
 import { classifyCommand, type Decision } from "./permissions.js";
 import { formatBashResult, type RawBashResult } from "./bash-format.js";
 import type { Config } from "../config/schema.js";
+import { CWD } from "../config/paths.js";
 
 const DEFAULT_TIMEOUT_MS = 120_000;
 const DEFAULT_MAX_OUTPUT_BYTES = 30_000;
@@ -23,7 +24,6 @@ export interface PermissionRequester {
 
 export interface BashToolDeps {
   config: Config;
-  cwd: string;
   requester: PermissionRequester;
   /**
    * Optional callback invoked when the user selects "always allow". Used by
@@ -39,14 +39,13 @@ export interface BashToolDeps {
 
 async function runBash(
   command: string,
-  cwd: string,
   timeoutMs: number,
   exec: typeof execa,
 ): Promise<RawBashResult> {
   const start = Date.now();
   try {
     const result = await exec("bash", ["-c", command], {
-      cwd,
+      cwd: CWD,
       timeout: timeoutMs,
       reject: false,
       all: false,
@@ -105,7 +104,7 @@ export function createBashTool(deps: BashToolDeps) {
         }
       }
 
-      const raw = await runBash(command, deps.cwd, timeout_ms ?? DEFAULT_TIMEOUT_MS, exec);
+      const raw = await runBash(command, timeout_ms ?? DEFAULT_TIMEOUT_MS, exec);
       return formatBashResult(raw, { maxBytes: DEFAULT_MAX_OUTPUT_BYTES });
     },
   });

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Text, useInput } from "ink";
 import type { StoredSession } from "../session/schema.js";
+import { CWD } from "../config/paths.js";
 
 export type PickResult =
   | { kind: "new" }
@@ -14,7 +15,6 @@ export interface SessionSummary
 
 interface Props {
   sessions: SessionSummary[];
-  cwd: string;
   onPick: (result: PickResult) => void;
 }
 
@@ -35,11 +35,11 @@ function formatDate(iso: string): string {
   }
 }
 
-export const SessionPicker: React.FC<Props> = ({ sessions, cwd, onPick }) => {
+export const SessionPicker: React.FC<Props> = ({ sessions, onPick }) => {
   const items = [
     { label: "Start new session", id: "__new__" as const },
     ...sessions.map((s) => ({
-      label: `${formatDate(s.updatedAt)}  ${s.cwd === cwd ? "*" : " "} ${s.title ?? s.id.slice(0, 8)}`,
+      label: `${formatDate(s.updatedAt)}  ${s.cwd === CWD ? "*" : " "} ${s.title ?? s.id.slice(0, 8)}`,
       id: s.id,
     })),
   ];
@@ -66,7 +66,7 @@ export const SessionPicker: React.FC<Props> = ({ sessions, cwd, onPick }) => {
       <Text dimColor>
         {`Pick a session  ·  ↑/↓ to move  ·  enter to select  ·  q to quit`}
       </Text>
-      <Text dimColor>cwd: {cwd}</Text>
+      <Text dimColor>cwd: {CWD}</Text>
       <Box marginTop={1} flexDirection="column">
         {items.map((item, i) =>
           i === index ? (
