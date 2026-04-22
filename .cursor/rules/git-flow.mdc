@@ -54,6 +54,15 @@ Squash merge only. `main` stays linear.
 - `allow_squash_merge: true`, `allow_merge_commit: false`, `allow_rebase_merge: false`
 - Branches are auto-deleted on merge (`delete_branch_on_merge: true`).
 
+## Enforcement
+
+These conventions are enforced automatically:
+
+- **Commit messages**: `commitlint` with `@commitlint/config-conventional` runs via a Husky `commit-msg` hook (`.husky/commit-msg`). Configured in `commitlint.config.js`. Installed on `npm install` via the `prepare` script.
+- **PR titles**: GitHub Action `.github/workflows/pr-title.yml` (using `amannn/action-semantic-pull-request`) fails the check on any PR whose title is not Conventional Commits. Make it a required status check on `main` in branch protection so such PRs cannot be merged.
+
+If the hook or action is ever misbehaving, fix the config — do not bypass with `--no-verify` or by disabling the workflow.
+
 ## Commit hygiene
 
 - Never mention Cursor, the agent, the assistant, or AI tooling in commit messages, PR titles, or PR bodies.
