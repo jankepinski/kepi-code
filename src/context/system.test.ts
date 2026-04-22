@@ -2,15 +2,14 @@ import { describe, it, expect } from "vitest";
 import { buildSystemPrompt } from "./system.js";
 
 describe("buildSystemPrompt", () => {
-  it("includes cwd and platform", () => {
+  it("includes current cwd and platform", () => {
     const prompt = buildSystemPrompt({
-      cwd: "/home/user/proj",
       platform: "darwin",
       rules: [],
       skills: [],
       mcpTools: [],
     });
-    expect(prompt).toContain("/home/user/proj");
+    expect(prompt).toContain(process.cwd());
     expect(prompt).toContain("darwin");
     expect(prompt).toContain("kepi code");
     expect(prompt).toContain("bash");
@@ -18,7 +17,6 @@ describe("buildSystemPrompt", () => {
 
   it("omits empty rules/skills/mcp sections", () => {
     const prompt = buildSystemPrompt({
-      cwd: "/tmp",
       platform: "linux",
       rules: [],
       skills: [],
@@ -31,7 +29,6 @@ describe("buildSystemPrompt", () => {
 
   it("includes rules when present", () => {
     const prompt = buildSystemPrompt({
-      cwd: "/tmp",
       platform: "linux",
       rules: [{ name: "style", content: "use 2 spaces", path: "/x", scope: "global" }],
       skills: [],
@@ -44,7 +41,6 @@ describe("buildSystemPrompt", () => {
 
   it("lists skills with name + description only", () => {
     const prompt = buildSystemPrompt({
-      cwd: "/tmp",
       platform: "linux",
       rules: [],
       skills: [
@@ -65,7 +61,6 @@ describe("buildSystemPrompt", () => {
 
   it("lists MCP tools when present", () => {
     const prompt = buildSystemPrompt({
-      cwd: "/tmp",
       platform: "linux",
       rules: [],
       skills: [],
@@ -77,7 +72,6 @@ describe("buildSystemPrompt", () => {
 
   it("is deterministic for identical input", () => {
     const input = {
-      cwd: "/tmp",
       platform: "linux",
       rules: [{ name: "r", content: "c", path: "/p", scope: "global" as const }],
       skills: [{ name: "s", description: "d", path: "/p", scope: "global" as const }],

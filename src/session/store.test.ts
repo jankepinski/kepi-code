@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { SessionStore } from "./store.js";
+import { writeSessionFile } from "../test/utils.js";
 import type { CoreMessage } from "ai";
 
 let tmpDir: string;
@@ -19,14 +20,19 @@ afterEach(async () => {
 
 describe("SessionStore", () => {
   it("createDraft returns a session with unique id", () => {
-    const a = store.createDraft({ cwd: "/tmp", model: "x/y" });
-    const b = store.createDraft({ cwd: "/tmp", model: "x/y" });
+    const a = store.createDraft({ model: "x/y" });
+    const b = store.createDraft({ model: "x/y" });
     expect(a.id).not.toBe(b.id);
     expect(a.messages).toEqual([]);
   });
 
+  it("createDraft stamps session with the current cwd", () => {
+    const draft = store.createDraft({ model: "x/y" });
+    expect(draft.cwd).toBe(process.cwd());
+  });
+
   it("save and load round-trips messages", async () => {
-    const draft = store.createDraft({ cwd: "/tmp", model: "x/y" });
+    const draft = store.createDraft({ model: "x/y" });
     const messages: CoreMessage[] = [
       { role: "user", content: "hello" },
       { role: "assistant", content: "hi there" },
@@ -44,10 +50,10 @@ describe("SessionStore", () => {
   });
 
   it("list returns sessions sorted by updatedAt desc", async () => {
-    const a = store.createDraft({ cwd: "/tmp/a", model: "x/y" });
+    const a = store.createDraft({ model: "x/y" });
     await store.save(a, []);
     await new Promise((r) => setTimeout(r, 10));
-    const b = store.createDraft({ cwd: "/tmp/b", model: "x/y" });
+    const b = store.createDraft({ model: "x/y" });
     await store.save(b, []);
 
     const list = await store.list();
@@ -57,7 +63,7 @@ describe("SessionStore", () => {
   });
 
   it("list skips corrupted JSON files", async () => {
-    const good = store.createDraft({ cwd: "/tmp", model: "x/y" });
+    const good = store.createDraft({ model: "x/y" });
     await store.save(good, []);
     await fs.writeFile(path.join(tmpDir, "bad.json"), "{not json", "utf8");
 
@@ -67,29 +73,33 @@ describe("SessionStore", () => {
   });
 
   it("save uses atomic rename (no tmp file left behind)", async () => {
-    const draft = store.createDraft({ cwd: "/tmp", model: "x/y" });
+    const draft = store.createDraft({ model: "x/y" });
     await store.save(draft, []);
     const files = await fs.readdir(tmpDir);
     const tmpFiles = files.filter((f) => f.includes(".tmp-"));
     expect(tmpFiles).toHaveLength(0);
   });
 
-  it("findLastForCwd returns most recent session for given cwd", async () => {
-    const a = store.createDraft({ cwd: "/tmp/a", model: "x/y" });
+  it("findLastForCwd returns most recent session for current cwd, ignoring others", async () => {
+    const a = store.createDraft({ model: "x/y" });
     await store.save(a, []);
     await new Promise((r) => setTimeout(r, 10));
-    const b = store.createDraft({ cwd: "/tmp/a", model: "x/y" });
+    const b = store.createDraft({ model: "x/y" });
     await store.save(b, []);
     await new Promise((r) => setTimeout(r, 10));
-    const other = store.createDraft({ cwd: "/tmp/other", model: "x/y" });
-    await store.save(other, []);
+    // Session persisted with a different cwd should be ignored.
+    await writeSessionFile(tmpDir, {
+      cwd: "/tmp/some-other-cwd",
+      updatedAt: new Date(Date.now() + 1_000_000).toISOString(),
+    });
 
-    const found = await store.findLastForCwd("/tmp/a");
+    const found = await store.findLastForCwd();
     expect(found?.id).toBe(b.id);
   });
 
-  it("findLastForCwd returns null when no match", async () => {
-    const result = await store.findLastForCwd("/nonexistent");
+  it("findLastForCwd returns null when no session matches current cwd", async () => {
+    await writeSessionFile(tmpDir, { cwd: "/tmp/nonexistent" });
+    const result = await store.findLastForCwd();
     expect(result).toBeNull();
   });
 
@@ -100,7 +110,7 @@ describe("SessionStore", () => {
   });
 
   it("save updates updatedAt on each save", async () => {
-    const draft = store.createDraft({ cwd: "/tmp", model: "x/y" });
+    const draft = store.createDraft({ model: "x/y" });
     await store.save(draft, []);
     const first = await store.load(draft.id);
     await new Promise((r) => setTimeout(r, 10));

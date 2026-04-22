@@ -1,3 +1,4 @@
+import { CWD } from "../config/paths.js";
 import type { Skill } from "./skills.js";
 import type { Rule } from "./rules.js";
 
@@ -7,7 +8,6 @@ export interface McpToolDescriptor {
 }
 
 export interface SystemPromptInput {
-  cwd: string;
   platform: string;
   rules: Rule[];
   skills: Skill[];
@@ -28,7 +28,7 @@ export function buildSystemPrompt(input: SystemPromptInput): string {
       "searching (rg, find), editing (sed, heredoc), running git, running tests, anything CLI.",
       "Do not ask for more specialized tools; compose bash invocations instead.",
       "",
-      `Current working directory: ${input.cwd}`,
+      `Current working directory: ${CWD}`,
       `OS platform: ${input.platform}`,
     ].join("\n"),
   );

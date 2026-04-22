@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text, useApp } from "ink";
 import type { ToolSet } from "ai";
-import { loadConfig, globalConfigExists, writeGlobalConfig } from "./config/load.js";
+import { loadConfig, writeGlobalConfig } from "./config/load.js";
 import { paths } from "./config/paths.js";
 import type { Config } from "./config/schema.js";
 import { sessionStore } from "./session/store.js";
@@ -19,14 +19,11 @@ import Chat from "./ui/Chat.js";
 export enum Action {
   New = "new",
   Continue = "continue",
-  Resume = "resume",
   Menu = "menu",
 }
 
 export interface AppProps {
-  cwd: string;
   action: Action;
-  resumeId?: string;
 }
 
 type Phase =
@@ -44,7 +41,7 @@ type Phase =
     }
   | { kind: "error"; message: string };
 
-export const App: React.FC<AppProps> = ({ cwd, action, resumeId }) => {
+export const App: React.FC<AppProps> = ({ action }) => {
   const { exit } = useApp();
   const [phase, setPhase] = useState<Phase>({ kind: "booting" });
 
@@ -54,37 +51,24 @@ export const App: React.FC<AppProps> = ({ cwd, action, resumeId }) => {
 
   async function bootstrap() {
     try {
-      const hasConfig = await globalConfigExists();
-      if (!hasConfig) {
+      const config = await loadConfig();
+      if (!config) {
         setPhase({ kind: "first-run" });
         return;
       }
-      const config = await loadConfig(cwd);
       const list = await sessionStore.list();
 
-      if (action === Action.New) {
-        await startChat(config, null);
-        return;
-      }
-      if (action === Action.Continue) {
-        const last = await sessionStore.findLastForCwd(cwd);
-        await startChat(config, last);
-        return;
-      }
-      if (action === Action.Resume) {
-        if (!resumeId) {
-          setPhase({ kind: "error", message: "Missing session id for resume" });
+      switch (action) {
+        case Action.New:
+          await startChat(config, null);
           return;
-        }
-        const loaded = await sessionStore.load(resumeId);
-        if (!loaded) {
-          setPhase({ kind: "error", message: `Session not found: ${resumeId}` });
+        case Action.Continue:
+          await startChat(config, await sessionStore.findLastForCwd());
           return;
-        }
-        await startChat(config, loaded);
-        return;
+        case Action.Menu:
+          setPhase({ kind: "picking", sessions: list, config });
+          return;
       }
-      setPhase({ kind: "picking", sessions: list, config });
     } catch (err) {
       setPhase({
         kind: "error",
@@ -94,27 +78,26 @@ export const App: React.FC<AppProps> = ({ cwd, action, resumeId }) => {
   }
 
   async function startChat(config: Config, existing: StoredSession | null) {
-    const session = existing ?? sessionStore.createDraft({ cwd, model: config.openrouter.model });
+    const session = existing ?? sessionStore.createDraft({ model: config.openrouter.model });
 
     const [skills, rules, mcpCfg] = await Promise.all([
       loadSkills({
         globalDir: paths.globalSkills,
-        projectDir: paths.projectSkills(cwd),
+        projectDir: paths.projectSkills,
       }),
       loadRules({
         globalDir: paths.globalRules,
-        projectDir: paths.projectRules(cwd),
+        projectDir: paths.projectRules,
       }),
       loadMcpConfig({
         globalPath: paths.globalMcp,
-        projectPath: paths.projectMcp(cwd),
+        projectPath: paths.projectMcp,
       }),
     ]);
 
     const mcp = Object.keys(mcpCfg.servers).length > 0 ? await connectMcpServers(mcpCfg) : null;
 
     const system = buildSystemPrompt({
-      cwd,
       platform: process.platform,
       rules,
       skills,
@@ -189,7 +172,7 @@ export const App: React.FC<AppProps> = ({ cwd, action, resumeId }) => {
     );
   }
   if (phase.kind === "picking") {
-    return <SessionPicker sessions={phase.sessions} cwd={cwd} onPick={handlePick} />;
+    return <SessionPicker sessions={phase.sessions} onPick={handlePick} />;
   }
   if (phase.kind === "loading-session") {
     return <Text>Loading session...</Text>;
@@ -198,7 +181,6 @@ export const App: React.FC<AppProps> = ({ cwd, action, resumeId }) => {
     return (
       <Chat
         config={phase.config}
-        cwd={cwd}
         system={phase.system}
         model={createModel(phase.config)}
         baseTools={phase.baseTools}

@@ -24,7 +24,6 @@ interface HistoryItem {
 
 interface Props {
   config: Config;
-  cwd: string;
   system: string;
   model: LanguageModel;
   baseTools: ToolSet;
@@ -40,7 +39,6 @@ type PendingConfirm = {
 
 export const Chat: React.FC<Props> = ({
   config: initialConfig,
-  cwd,
   system,
   model,
   baseTools,
@@ -87,7 +85,6 @@ export const Chat: React.FC<Props> = ({
     () =>
       createBashTool({
         config: configRef.current,
-        cwd,
         requester: { requestApproval },
         onAlwaysAllow: async (pattern) => {
           const updated = await onPersistConfig((cfg) => ({
@@ -100,7 +97,7 @@ export const Chat: React.FC<Props> = ({
           setConfigState(updated);
         },
       }),
-    [cwd, requestApproval, onPersistConfig],
+    [requestApproval, onPersistConfig],
   );
 
   const tools: ToolSet = useMemo(() => ({ bash: bashTool, ...baseTools }), [bashTool, baseTools]);

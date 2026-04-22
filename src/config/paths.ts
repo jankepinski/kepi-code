@@ -1,12 +1,11 @@
 import os from "node:os";
 import path from "node:path";
 
+export const CWD = process.cwd();
 export const GLOBAL_DIR = path.join(os.homedir(), ".kepi");
 export const PROJECT_DIR_NAME = ".kepi";
 
-export function projectDir(cwd: string): string {
-  return path.join(cwd, PROJECT_DIR_NAME);
-}
+const PROJECT_DIR = path.join(CWD, PROJECT_DIR_NAME);
 
 export const paths = {
   globalConfig: path.join(GLOBAL_DIR, "config.json"),
@@ -14,8 +13,8 @@ export const paths = {
   globalSkills: path.join(GLOBAL_DIR, "skills"),
   globalRules: path.join(GLOBAL_DIR, "rules"),
   sessions: path.join(GLOBAL_DIR, "sessions"),
-  projectConfig: (cwd: string) => path.join(projectDir(cwd), "config.json"),
-  projectMcp: (cwd: string) => path.join(projectDir(cwd), "mcp.json"),
-  projectSkills: (cwd: string) => path.join(projectDir(cwd), "skills"),
-  projectRules: (cwd: string) => path.join(projectDir(cwd), "rules"),
+  projectConfig: path.join(PROJECT_DIR, "config.json"),
+  projectMcp: path.join(PROJECT_DIR, "mcp.json"),
+  projectSkills: path.join(PROJECT_DIR, "skills"),
+  projectRules: path.join(PROJECT_DIR, "rules"),
 };

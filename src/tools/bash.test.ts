@@ -33,7 +33,6 @@ describe("createBashTool", () => {
     const requester = approver({ kind: "approve" });
     const bashTool = createBashTool({
       config: baseConfig,
-      cwd: "/tmp",
       requester,
       exec: mockExec("hi\n"),
     });
@@ -50,7 +49,6 @@ describe("createBashTool", () => {
     const requester = approver({ kind: "approve" });
     const bashTool = createBashTool({
       config: baseConfig,
-      cwd: "/tmp",
       requester,
       exec: mockExec("ok"),
     });
@@ -66,7 +64,6 @@ describe("createBashTool", () => {
     const exec = mockExec("should not run");
     const bashTool = createBashTool({
       config: baseConfig,
-      cwd: "/tmp",
       requester,
       exec,
     });
@@ -84,7 +81,6 @@ describe("createBashTool", () => {
     const exec = mockExec("x");
     const bashTool = createBashTool({
       config: baseConfig,
-      cwd: "/tmp",
       requester,
       exec,
     });
@@ -101,7 +97,6 @@ describe("createBashTool", () => {
     const onAlwaysAllow = vi.fn();
     const bashTool = createBashTool({
       config: baseConfig,
-      cwd: "/tmp",
       requester,
       exec: mockExec("ok"),
       onAlwaysAllow,

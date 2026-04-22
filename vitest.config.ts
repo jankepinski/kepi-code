@@ -4,11 +4,13 @@ export default defineConfig({
   test: {
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     environment: "node",
+    setupFiles: ["src/test/setup.ts"],
     coverage: {
       provider: "v8",
       include: ["src/**/*.ts"],
       exclude: [
         "src/**/*.test.ts",
+        "src/test/**",
         "src/cli.tsx",
         "src/app.tsx",
         "src/__fixtures__/**",

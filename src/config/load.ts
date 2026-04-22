@@ -16,29 +16,16 @@ async function readJsonIfExists(filePath: string): Promise<unknown | null> {
   }
 }
 
-export async function loadConfig(cwd: string): Promise<Config> {
+export async function loadConfig(): Promise<Config | null> {
   const globalRaw = await readJsonIfExists(paths.globalConfig);
-  if (!globalRaw) {
-    throw new Error(
-      `No global config found at ${paths.globalConfig}. Run 'kepi' once to set it up.`,
-    );
-  }
+  if (!globalRaw) return null;
 
   const global = configSchema.parse(globalRaw);
 
-  const projectRaw = await readJsonIfExists(paths.projectConfig(cwd));
+  const projectRaw = await readJsonIfExists(paths.projectConfig);
   const project = projectRaw ? partialConfigSchema.parse(projectRaw) : null;
 
   return mergeConfigs(global, project);
-}
-
-export async function globalConfigExists(): Promise<boolean> {
-  try {
-    await fs.access(paths.globalConfig);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 export async function writeGlobalConfig(config: Config): Promise<void> {

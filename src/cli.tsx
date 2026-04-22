@@ -10,47 +10,21 @@ program
   .description("kepi code - ultra lightweight coding agent")
   .version("0.1.0")
   .addOption(
-    new Option(
-      `--${Action.New}`,
-      "start a new session (skip picker)",
-    ).conflicts([Action.Continue, Action.Resume]),
+    new Option(`--${Action.New}`, "start a new session (skip picker)").conflicts([Action.Continue]),
   )
   .addOption(
-    new Option(
-      `--${Action.Continue}`,
-      "continue most recent session from this cwd",
-    ).conflicts([Action.New, Action.Resume]),
-  )
-  .addOption(
-    new Option(
-      `--${Action.Resume} <id>`,
-      "resume a specific session by id",
-    ).conflicts([Action.New, Action.Continue]),
+    new Option(`--${Action.Continue}`, "continue most recent session from this cwd").conflicts([
+      Action.New,
+    ]),
   )
   .parse(process.argv);
 
-const opts = program.opts<{
-  [Action.New]?: boolean;
-  [Action.Continue]?: boolean;
-  [Action.Resume]?: string;
-}>();
+const opts = program.opts();
 
-const resumeId = opts[Action.Resume]?.trim();
-if (opts[Action.Resume] !== undefined && !resumeId) {
-  program.error(`option '--${Action.Resume} <id>' requires a non-empty session id`);
-}
-
-const action: Action = (() => {
-  if (resumeId) return Action.Resume;
+function getAction(): Action {
   if (opts[Action.New]) return Action.New;
   if (opts[Action.Continue]) return Action.Continue;
   return Action.Menu;
-})();
+}
 
-render(
-  <App
-    cwd={process.cwd()}
-    action={action}
-    {...(resumeId ? { resumeId } : {})}
-  />,
-);
+render(<App action={getAction()} />);
