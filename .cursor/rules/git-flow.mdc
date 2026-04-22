@@ -1,0 +1,62 @@
+---
+description: Git and GitHub workflow for this repo (branches, PRs, commits, merges)
+alwaysApply: true
+---
+
+# Git flow
+
+Never commit directly to `main`. All changes ship through PRs.
+
+## Branch naming
+
+`<type>/<short-kebab-slug>` where `<type>` matches the Conventional Commits type
+of the eventual PR title.
+
+Examples:
+- `feat/session-picker-filter`
+- `fix/mcp-connect-timeout`
+- `refactor/remove-cwd-prop-drilling`
+- `chore/bump-deps`
+
+## PR titles — Conventional Commits (required)
+
+PR titles MUST follow Conventional Commits: `<type>(<optional-scope>): <subject>`.
+
+Allowed types: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `build`,
+`ci`, `chore`, `style`, `revert`.
+
+Subject: imperative mood, lowercase, no trailing period, keep under ~72 chars.
+
+Examples:
+- `feat(cli): add --continue flag`
+- `fix(session): avoid crash on corrupt session JSON`
+- `refactor: remove cwd prop drilling, centralize in config/paths`
+- `chore(deps): bump vitest to 2.1`
+
+The PR title becomes the squash commit title on `main` (`squash_merge_commit_title: PR_TITLE`), so treat it as the permanent changelog entry.
+
+## PR body
+
+The PR body becomes the squash commit message (`squash_merge_commit_message: PR_BODY`). Keep it useful for future readers:
+
+```
+## Summary
+- bullet points describing the change
+
+## Test plan
+- [x] what was verified
+- [ ] what still needs manual verification
+```
+
+## Merge strategy
+
+Squash merge only. `main` stays linear.
+- `allow_squash_merge: true`, `allow_merge_commit: false`, `allow_rebase_merge: false`
+- Branches are auto-deleted on merge (`delete_branch_on_merge: true`).
+
+## Commit hygiene
+
+- Never mention Cursor, the agent, the assistant, or AI tooling in commit messages, PR titles, or PR bodies.
+- Never `--no-verify` or skip hooks.
+- Never force-push to `main`. Avoid `--amend` on commits that were already pushed.
+- Only commit when the user explicitly asks.
