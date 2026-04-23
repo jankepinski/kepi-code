@@ -22,9 +22,7 @@ export interface RunTurnResult {
  *
  * Multi-step tool-calling is handled by streamText itself via maxSteps.
  */
-export async function* runTurn(
-  options: RunTurnOptions,
-): AsyncGenerator<AgentEvent, RunTurnResult> {
+export async function* runTurn(options: RunTurnOptions): AsyncGenerator<AgentEvent, RunTurnResult> {
   const result = streamText({
     model: options.model,
     system: options.system,
@@ -78,8 +76,7 @@ export async function* runTurn(
           break;
         }
         case "error": {
-          const err =
-            part.error instanceof Error ? part.error : new Error(String(part.error));
+          const err = part.error instanceof Error ? part.error : new Error(String(part.error));
           yield { type: "error", error: err };
           break;
         }

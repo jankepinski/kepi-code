@@ -17,10 +17,7 @@ async function readDirSafe(dir: string): Promise<string[]> {
   }
 }
 
-async function loadSkillFromDir(
-  skillDir: string,
-  scope: Skill["scope"],
-): Promise<Skill | null> {
+async function loadSkillFromDir(skillDir: string, scope: Skill["scope"]): Promise<Skill | null> {
   const skillFile = path.join(skillDir, "SKILL.md");
   try {
     const raw = await fs.readFile(skillFile, "utf8");

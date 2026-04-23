@@ -37,10 +37,7 @@ async function loadRulesFromDir(dir: string, scope: Rule["scope"]): Promise<Rule
   return results;
 }
 
-export async function loadRules(opts: {
-  globalDir: string;
-  projectDir: string;
-}): Promise<Rule[]> {
+export async function loadRules(opts: { globalDir: string; projectDir: string }): Promise<Rule[]> {
   const [globals, projects] = await Promise.all([
     loadRulesFromDir(opts.globalDir, "global"),
     loadRulesFromDir(opts.projectDir, "project"),

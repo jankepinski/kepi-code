@@ -50,7 +50,9 @@ export const Chat: React.FC<Props> = ({
   const configRef = useRef(configState);
   configRef.current = configState;
 
-  const [messages, setMessages] = useState<CoreMessage[]>(session.messages as unknown as CoreMessage[]);
+  const [messages, setMessages] = useState<CoreMessage[]>(
+    session.messages as unknown as CoreMessage[],
+  );
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
 
@@ -60,8 +62,7 @@ export const Chat: React.FC<Props> = ({
   const [busy, setBusy] = useState(false);
   const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(null);
   const [statusText, setStatusText] = useState<string>("");
-  const pushHistory = (item: HistoryItem) =>
-    setHistory((h) => [...h, item]);
+  const pushHistory = (item: HistoryItem) => setHistory((h) => [...h, item]);
 
   const requestApproval = useCallback(
     (command: string, decision: Decision): Promise<ApprovalResult> =>
@@ -159,11 +160,9 @@ export const Chat: React.FC<Props> = ({
           )
         ) {
           setStatusText("compacting context...");
-          const compacted = await runCompaction(
-            finalMessages,
-            configRef.current.compaction,
-            { model },
-          );
+          const compacted = await runCompaction(finalMessages, configRef.current.compaction, {
+            model,
+          });
           if (compacted) {
             setMessages(compacted.messages);
             session.compactedAt = [...session.compactedAt, new Date().toISOString()];
@@ -222,9 +221,7 @@ export const Chat: React.FC<Props> = ({
         break;
       case "tool-result": {
         const result =
-          typeof event.result === "string"
-            ? event.result
-            : JSON.stringify(event.result, null, 2);
+          typeof event.result === "string" ? event.result : JSON.stringify(event.result, null, 2);
         pushHistory({
           id: `tr-${event.toolCallId}`,
           kind: "tool",

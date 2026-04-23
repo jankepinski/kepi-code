@@ -28,9 +28,7 @@ describe("mcpConfigSchema", () => {
   });
 
   it("rejects missing command", () => {
-    expect(() =>
-      mcpConfigSchema.parse({ servers: { foo: { args: [] } } }),
-    ).toThrow();
+    expect(() => mcpConfigSchema.parse({ servers: { foo: { args: [] } } })).toThrow();
   });
 
   it("accepts env var map", () => {
@@ -69,16 +67,8 @@ describe("loadMcpConfig", () => {
   it("loads and merges both files", async () => {
     const g = path.join(root, "g.json");
     const p = path.join(root, "p.json");
-    await fs.writeFile(
-      g,
-      JSON.stringify({ servers: { a: { command: "x" } } }),
-      "utf8",
-    );
-    await fs.writeFile(
-      p,
-      JSON.stringify({ servers: { b: { command: "y" } } }),
-      "utf8",
-    );
+    await fs.writeFile(g, JSON.stringify({ servers: { a: { command: "x" } } }), "utf8");
+    await fs.writeFile(p, JSON.stringify({ servers: { b: { command: "y" } } }), "utf8");
     const r = await loadMcpConfig({ globalPath: g, projectPath: p });
     expect(Object.keys(r.servers).sort()).toEqual(["a", "b"]);
   });

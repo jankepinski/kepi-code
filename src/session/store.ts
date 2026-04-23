@@ -63,7 +63,9 @@ export class SessionStore {
     }
   }
 
-  async list(): Promise<Array<Pick<StoredSession, "id" | "createdAt" | "updatedAt" | "cwd" | "model" | "title">>> {
+  async list(): Promise<
+    Array<Pick<StoredSession, "id" | "createdAt" | "updatedAt" | "cwd" | "model" | "title">>
+  > {
     try {
       await this.ensureDir();
       const files = await fs.readdir(this.opts.dir);

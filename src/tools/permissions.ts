@@ -115,10 +115,7 @@ function isDestructive(segment: string): boolean {
  *   3. If ALL segments match autoApprove → auto-approve.
  *   4. Otherwise → confirm.
  */
-export function classifyCommand(
-  command: string,
-  permissions: Config["permissions"],
-): Decision {
+export function classifyCommand(command: string, permissions: Config["permissions"]): Decision {
   const trimmed = command.trim();
   if (!trimmed) {
     return { kind: "deny", reason: "Empty command" };

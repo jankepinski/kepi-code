@@ -22,10 +22,6 @@ export async function writeSessionFile(
     updatedAt: now,
     ...overrides,
   };
-  await fs.writeFile(
-    path.join(dir, `${session.id}.json`),
-    JSON.stringify(session),
-    "utf8",
-  );
+  await fs.writeFile(path.join(dir, `${session.id}.json`), JSON.stringify(session), "utf8");
   return session.id;
 }

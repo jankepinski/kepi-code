@@ -29,11 +29,7 @@ describe("splitPipeline", () => {
   });
 
   it("handles mixed separators", () => {
-    expect(splitPipeline("ls | grep x && echo done")).toEqual([
-      "ls",
-      "grep x",
-      "echo done",
-    ]);
+    expect(splitPipeline("ls | grep x && echo done")).toEqual(["ls", "grep x", "echo done"]);
   });
 
   it("preserves quoted content", () => {
@@ -106,9 +102,7 @@ describe("classifyCommand", () => {
   });
 
   it("confirms git push --force", () => {
-    expect(classifyCommand("git push --force origin main", defaultPerms).kind).toBe(
-      "confirm",
-    );
+    expect(classifyCommand("git push --force origin main", defaultPerms).kind).toBe("confirm");
     expect(classifyCommand("git push -f origin main", defaultPerms).kind).toBe("confirm");
   });
 

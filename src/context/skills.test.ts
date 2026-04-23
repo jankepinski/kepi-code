@@ -63,11 +63,7 @@ describe("loadSkills", () => {
 
   it("loads valid skills and ignores invalid ones", async () => {
     const globalDir = path.join(root, "global");
-    await writeSkill(
-      globalDir,
-      "valid",
-      `---\nname: valid\ndescription: a valid skill\n---`,
-    );
+    await writeSkill(globalDir, "valid", `---\nname: valid\ndescription: a valid skill\n---`);
     await writeSkill(globalDir, "missing-desc", `---\nname: x\n---`);
     await writeSkill(globalDir, "no-frontmatter", `just body`);
 
@@ -83,16 +79,8 @@ describe("loadSkills", () => {
   it("project skills override global by name", async () => {
     const globalDir = path.join(root, "global");
     const projectDir = path.join(root, "project");
-    await writeSkill(
-      globalDir,
-      "shared",
-      `---\nname: shared\ndescription: from global\n---`,
-    );
-    await writeSkill(
-      projectDir,
-      "shared",
-      `---\nname: shared\ndescription: from project\n---`,
-    );
+    await writeSkill(globalDir, "shared", `---\nname: shared\ndescription: from global\n---`);
+    await writeSkill(projectDir, "shared", `---\nname: shared\ndescription: from project\n---`);
 
     const result = await loadSkills({ globalDir, projectDir });
     expect(result).toHaveLength(1);
