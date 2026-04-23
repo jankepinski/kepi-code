@@ -6,6 +6,35 @@ updates:
       interval: weekly
     open-pull-requests-limit: 10
     groups:
+      ai-sdk:
+        patterns:
+          - "ai"
+          - "@openrouter/ai-sdk-provider"
+      ink:
+        patterns:
+          - "ink"
+          - "ink-*"
+      react:
+        patterns:
+          - "react"
+          - "@types/react"
+      marked:
+        patterns:
+          - "marked"
+          - "marked-*"
+          - "@types/marked-*"
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@typescript-eslint/*"
+      commitlint:
+        patterns:
+          - "@commitlint/*"
       npm-minor-and-patch:
         update-types:
           - minor
