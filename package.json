@@ -47,7 +47,7 @@
     "ink-text-input": "^6.0.0",
     "marked": "^15.0.7",
     "marked-terminal": "^7.2.1",
-    "react": "^18.3.1",
+    "react": "^19.2.5",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -55,7 +55,7 @@
     "@commitlint/config-conventional": "^20.5.0",
     "@types/marked-terminal": "^6.1.1",
     "@types/node": "^25.6.0",
-    "@types/react": "^18.3.18",
+    "@types/react": "^19.2.14",
     "@typescript-eslint/eslint-plugin": "^8.19.1",
     "@typescript-eslint/parser": "^8.19.1",
     "@vitest/coverage-v8": "^2.1.8",
