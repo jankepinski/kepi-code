@@ -23,6 +23,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write src",
+    "format:check": "prettier --check src",
     "prepublishOnly": "npm run build",
     "prepare": "husky"
   },
