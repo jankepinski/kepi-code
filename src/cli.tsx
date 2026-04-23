@@ -21,10 +21,9 @@ program
 
 const opts = program.opts();
 
-function getAction(): Action {
+function getAction() {
   if (opts[Action.New]) return Action.New;
   if (opts[Action.Continue]) return Action.Continue;
-  return Action.Menu;
 }
 
 render(<App action={getAction()} />);
