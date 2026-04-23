@@ -1,3 +1,21 @@
+# Dependabot configuration.
+#
+# Peer-dep-coupled ecosystems are split into two groups per ecosystem:
+#
+#   <name>-major   bundles major bumps that must ship together because of
+#                  strict peer deps (e.g. vitest <-> @vitest/coverage-v8,
+#                  @typescript-eslint/parser <-> eslint-plugin,
+#                  marked <-> marked-terminal). Lands in its own PR so the
+#                  breaking-change signal stays visible, review is focused,
+#                  and one stuck migration does not block other updates.
+#
+#   <name>-minor   bundles minor + patch for the same ecosystem. Safe to
+#                  review quickly and friendly to auto-merge setups.
+#
+# Standalone minor/patch bumps that do not match a named ecosystem fall
+# through to the `npm-minor-and-patch` catch-all. Standalone majors remain
+# ungrouped on purpose: they show up as their own PR with an explicit
+# "major bump" scope, which is the behavior we want.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -6,61 +24,97 @@ updates:
       interval: weekly
     open-pull-requests-limit: 10
     groups:
-      ai-sdk:
+      ai-sdk-major:
         patterns:
           - "ai"
           - "@openrouter/ai-sdk-provider"
         update-types:
           - major
+      ai-sdk-minor:
+        patterns:
+          - "ai"
+          - "@openrouter/ai-sdk-provider"
+        update-types:
           - minor
           - patch
-      ink:
+      ink-major:
         patterns:
           - "ink"
           - "ink-*"
         update-types:
           - major
+      ink-minor:
+        patterns:
+          - "ink"
+          - "ink-*"
+        update-types:
           - minor
           - patch
-      react:
+      react-major:
         patterns:
           - "react"
           - "@types/react"
         update-types:
           - major
+      react-minor:
+        patterns:
+          - "react"
+          - "@types/react"
+        update-types:
           - minor
           - patch
-      marked:
+      marked-major:
         patterns:
           - "marked"
           - "marked-*"
           - "@types/marked-*"
         update-types:
           - major
+      marked-minor:
+        patterns:
+          - "marked"
+          - "marked-*"
+          - "@types/marked-*"
+        update-types:
           - minor
           - patch
-      vitest:
+      vitest-major:
         patterns:
           - "vitest"
           - "@vitest/*"
         update-types:
           - major
+      vitest-minor:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+        update-types:
           - minor
           - patch
-      eslint:
+      eslint-major:
         patterns:
           - "eslint"
           - "eslint-*"
           - "@typescript-eslint/*"
         update-types:
           - major
+      eslint-minor:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@typescript-eslint/*"
+        update-types:
           - minor
           - patch
-      commitlint:
+      commitlint-major:
         patterns:
           - "@commitlint/*"
         update-types:
           - major
+      commitlint-minor:
+        patterns:
+          - "@commitlint/*"
+        update-types:
           - minor
           - patch
       npm-minor-and-patch:
