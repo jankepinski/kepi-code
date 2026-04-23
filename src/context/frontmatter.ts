@@ -40,6 +40,9 @@ export function parseFrontmatter(raw: string): ParsedFrontmatter {
     return { data: {}, body: raw };
   }
 
-  const body = lines.slice(endIndex + 1).join("\n").replace(/^\n+/, "");
+  const body = lines
+    .slice(endIndex + 1)
+    .join("\n")
+    .replace(/^\n+/, "");
   return { data, body };
 }

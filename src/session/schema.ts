@@ -2,11 +2,7 @@ import { z } from "zod";
 
 // Loose schema for ModelMessage from AI SDK. We don't attempt to fully
 // validate message parts — just enough to round-trip safely.
-const rolePartSchema = z.union([
-  z.string(),
-  z.array(z.record(z.any())),
-  z.any(),
-]);
+const rolePartSchema = z.union([z.string(), z.array(z.record(z.any())), z.any()]);
 
 const messageSchema = z.object({
   role: z.enum(["system", "user", "assistant", "tool"]),

@@ -52,10 +52,7 @@ describe("createBashTool", () => {
       requester,
       exec: mockExec("ok"),
     });
-    await bashTool.execute!(
-      { command: "npm install" },
-      { messages: [], toolCallId: "t2" },
-    );
+    await bashTool.execute!({ command: "npm install" }, { messages: [], toolCallId: "t2" });
     expect(requester.requestApproval).toHaveBeenCalledOnce();
   });
 
@@ -101,10 +98,7 @@ describe("createBashTool", () => {
       exec: mockExec("ok"),
       onAlwaysAllow,
     });
-    await bashTool.execute!(
-      { command: "npm install" },
-      { messages: [], toolCallId: "t5" },
-    );
+    await bashTool.execute!({ command: "npm install" }, { messages: [], toolCallId: "t5" });
     expect(onAlwaysAllow).toHaveBeenCalledWith("npm");
   });
 });

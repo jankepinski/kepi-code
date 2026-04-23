@@ -3,13 +3,9 @@ import { Box, Text, useInput } from "ink";
 import type { StoredSession } from "../session/schema.js";
 import { CWD } from "../config/paths.js";
 
-export type PickResult =
-  | { kind: "new" }
-  | { kind: "resume"; id: string }
-  | { kind: "exit" };
+export type PickResult = { kind: "new" } | { kind: "resume"; id: string } | { kind: "exit" };
 
-export interface SessionSummary
-  extends Pick<StoredSession, "id" | "updatedAt" | "cwd" | "model"> {
+export interface SessionSummary extends Pick<StoredSession, "id" | "updatedAt" | "cwd" | "model"> {
   title?: string | undefined;
 }
 
@@ -63,9 +59,7 @@ export const SessionPicker: React.FC<Props> = ({ sessions, onPick }) => {
       <Text color="cyan" bold>
         kepi code
       </Text>
-      <Text dimColor>
-        {`Pick a session  ·  ↑/↓ to move  ·  enter to select  ·  q to quit`}
-      </Text>
+      <Text dimColor>{`Pick a session  ·  ↑/↓ to move  ·  enter to select  ·  q to quit`}</Text>
       <Text dimColor>cwd: {CWD}</Text>
       <Box marginTop={1} flexDirection="column">
         {items.map((item, i) =>

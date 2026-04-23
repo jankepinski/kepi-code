@@ -34,7 +34,8 @@ export const ConfirmPrompt: React.FC<Props> = ({ command, reason, onAnswer }) =>
       </Box>
       <Box marginTop={1}>
         <Text>
-          <Text color="green">[y]</Text> run once   <Text color="cyan">[a]</Text> always allow this prefix   <Text color="red">[n]</Text> skip
+          <Text color="green">[y]</Text> run once <Text color="cyan">[a]</Text> always allow this
+          prefix <Text color="red">[n]</Text> skip
         </Text>
       </Box>
     </Box>

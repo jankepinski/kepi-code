@@ -1,7 +1,4 @@
-import {
-  experimental_createMCPClient as createMCPClient,
-  type ToolSet,
-} from "ai";
+import { experimental_createMCPClient as createMCPClient, type ToolSet } from "ai";
 import { Experimental_StdioMCPTransport as StdioTransport } from "ai/mcp-stdio";
 import type { McpConfig, McpServerSpec } from "./schema.js";
 import type { McpToolDescriptor } from "../context/system.js";
@@ -51,8 +48,7 @@ export async function connectMcpServers(config: McpConfig): Promise<McpBundle> {
       combinedTools[prefixed] = tool;
       descriptors.push({
         name: prefixed,
-        description:
-          (tool as { description?: string }).description ?? `MCP tool from ${conn.name}`,
+        description: (tool as { description?: string }).description ?? `MCP tool from ${conn.name}`,
       });
     }
   }
