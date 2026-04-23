@@ -1,0 +1,24 @@
+echo "[pre-commit] prettier --check"
+npm run format:check --silent || {
+  echo
+  echo "[pre-commit] Formatting issues detected."
+  echo "  Fix: npm run format"
+  echo "  Bypass (emergencies only): git commit --no-verify"
+  exit 1
+}
+
+echo "[pre-commit] eslint"
+npm run lint --silent || {
+  echo
+  echo "[pre-commit] ESLint errors detected."
+  echo "  Bypass (emergencies only): git commit --no-verify"
+  exit 1
+}
+
+echo "[pre-commit] tsc --noEmit"
+npm run typecheck --silent || {
+  echo
+  echo "[pre-commit] TypeScript errors detected."
+  echo "  Bypass (emergencies only): git commit --no-verify"
+  exit 1
+}
